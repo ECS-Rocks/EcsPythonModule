@@ -41,11 +41,8 @@ class DynamoDB:
 
 
     def __len__(self):
-        table_data = self.table.scan()
-        try:
-            return len(table_data["Items"])
-        except KeyError:
-            return 0
+        table_data = self.get_all_items()
+        return len(table_data)
 
 
     # This method will get _ALL_ the data in a table, even over the 1MB limit. If you don't really
