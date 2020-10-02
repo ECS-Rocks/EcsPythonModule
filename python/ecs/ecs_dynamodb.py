@@ -34,9 +34,9 @@ class DynamoDB:
             self._primary_key: key,
             **item
         }
-    
+
         r = self.table.put_item(Item=new_entry)
-    
+
         return r
 
 
