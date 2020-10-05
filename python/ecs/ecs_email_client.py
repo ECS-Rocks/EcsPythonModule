@@ -72,7 +72,7 @@ class EmailClient:
         msg.attach(htmlpart)
 
         if tmp_file_attachment_name:
-            part = MIMEApplication(open(f"/tmp/{file_name}", "rb").read())
+            part = MIMEApplication(open(f"/tmp/{tmp_file_attachment_name}", "rb").read())
             part.add_header(
                 "Content-Disposition",
                 "attachment",
