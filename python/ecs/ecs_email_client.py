@@ -73,7 +73,11 @@ class EmailClient:
 
         if tmp_file_attachment_name:
             part = MIMEApplication(open(f"/tmp/{file_name}", "rb").read())
-            part.add_header("Content-Disposition", "attachment", filename=file_name)
+            part.add_header(
+                "Content-Disposition",
+                "attachment",
+                filename=tmp_file_attachment_name
+            )
             msg.attach(part)
 
         response = self._client.send_raw_email(
