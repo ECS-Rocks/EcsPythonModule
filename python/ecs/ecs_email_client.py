@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 class EmailClient:
 
     def __init__(
+        self,
         sender_email_address: str,
         charset: str = "UTF-8"
     ):
@@ -53,6 +54,7 @@ class EmailClient:
 
 
     def send_email(
+        self,
         subject:      str,
         message:      str,
         dest_address: str,
