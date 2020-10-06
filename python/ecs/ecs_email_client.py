@@ -7,11 +7,19 @@ from botocore.exceptions import ClientError
 
 
 class EmailClient:
+    """This class makes it easier to send emails in your code.
+
+    ----
+
+    This class has a method, send_email, with which you can easily send an email message from your Lambda function.
+    This class's ctor requires you to have a config.json in your Lambda function's directory to specify the Amazon
+    region name.
+    """
 
     def __init__(
-        self,
-        sender_email_address: str,
-        charset: str = "UTF-8"
+            self,
+            sender_email_address: str,
+            charset: str = "UTF-8"
     ):
         self._sender = sender_email_address
         self._charset = charset
@@ -26,7 +34,6 @@ class EmailClient:
 
         self._client = boto3.client("ses", region_name=self._config_options["region-name"])
 
-
     @staticmethod
     def _plain_to_text_email(message: str) -> str:
         return ("".join([
@@ -35,7 +42,6 @@ class EmailClient:
             "\r\nBeep beep! I'm a robot. Email my creator at Dante@elkhornservice.com if you have questions.",
             "\r\n"
         ]))
-
 
     @staticmethod
     def _plain_to_html_email(message: str) -> str:
@@ -52,24 +58,31 @@ class EmailClient:
             </html>
         """
 
-
     def send_email(
-        self,
-        subject:      str,
-        message:      str,
-        dest_address: str,
-        tmp_file_attachment_name: str = ""
+            self,
+            subject: str,
+            message: str,
+            dest_address: str,
+            tmp_file_attachment_name: str = ""
     ):
+        """The send_email method. This method attempts to send an email when it is called.
+
+        :param subject: the subject line of the email
+        :param message: the body of the email
+        :param dest_address: the address to which the email should be sent
+        :param tmp_file_attachment_name: (optional) a file located in /tmp which should be attached to the email
+        :return: response from Amazon's SES API
+        """
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = self._sender
         msg["To"] = dest_address
         body_text = self._plain_to_text_email(message)
         body_html = self._plain_to_html_email(message)
-        textpart = MIMEText(body_text.encode(self._charset), "plain", self._charset)
-        htmlpart = MIMEText(body_html.encode(self._charset), "html", self._charset)
-        msg.attach(textpart)
-        msg.attach(htmlpart)
+        text_part = MIMEText(body_text.encode(self._charset), "plain", self._charset)
+        html_part = MIMEText(body_html.encode(self._charset), "html", self._charset)
+        msg.attach(text_part)
+        msg.attach(html_part)
 
         if tmp_file_attachment_name:
             part = MIMEApplication(open(f"/tmp/{tmp_file_attachment_name}", "rb").read())
