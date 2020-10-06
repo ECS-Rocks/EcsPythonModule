@@ -1,6 +1,18 @@
 import json
+import decimal
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+
+
+def dynamodb_item_to_json(item: dict, indent=None) -> str:
+    result = {}
+    for key in item.keys():
+        if type(item[key]) is decimal.Decimal:
+            result[key] = float(item[key])
+        else:
+            result[key] = item[key]
+
+    return json.dumps(result, indent=indent)
 
 
 class DynamoDB:
