@@ -132,7 +132,7 @@ class DynamoDB:
     # This method will get _ALL_ the data in a table, even over the 1MB limit. If you don't really
     # need 1MB of data, use `DynamoDB.table.scan()` instead of `DynamoDB.get_all_items()`.
     def get_all_items(self, **kwargs):
-        """Method to get _all_ items from a table, even over the 1MB limit on scan() operations
+        """Method to get _all_ items from a table, even over the 1MB limit on scan() operations.
 
         ----
 
