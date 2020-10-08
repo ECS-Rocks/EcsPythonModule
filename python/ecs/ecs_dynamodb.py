@@ -150,6 +150,19 @@ class DynamoDB:
         self._len = None
         return self._table
 
+    @property
+    def primary_key_name(self):
+        """Property for getting the name of the table's primary key name.
+
+        ----
+
+        We want the primary key name to be read-only because there's never a
+        good reason to change it, since DynamoDB tables can't have their primary
+        key's name changed.
+
+        """
+        return self._primary_key
+
     def __len__(self):
         # The number of entries in the table is lazily evaluated. Any of this class's
         # methods that might change the number of entries in the table will result in
