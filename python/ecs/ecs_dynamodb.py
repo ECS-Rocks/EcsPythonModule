@@ -37,9 +37,9 @@ class DynamoDB:
 
     ----
 
-    Additionally, the Table object is public, so you can still use all of Amazon's API
-    methods. For example, if you have an instance of ecs.DynamoDB named "foo", and you
-    want to call delete_item on its table, you can do it like so:
+    Additionally, the Table object is asccesible through a @property, so you can still
+    use all of Amazon's API methods. For example, if you have an instance of ecs.DynamoDB
+    named "foo", and you want to call delete_item on its table, you can do it like so:
 
         foo.table.delete_item(Key={"primary-key-name": "key-of-item-to-delete"})
 
@@ -73,7 +73,12 @@ class DynamoDB:
             region_name=self._config_options["region-name"],
             endpoint_url=self._config_options["endpoint-url"]
         )
-        self.table = self._boto_dynamodb_client.Table(self._table_name)
+        self._table = self._boto_dynamodb_client.Table(self._table_name)
+
+        # To ensure that creating new DynamoDB objects isn't too expensive,
+        # the length of a table is lazily evaulated. Read the implementation
+        # of the method ecs.DynamoDB.__len__ to see how this works.
+        self._len = None
 
     def __getitem__(self, value):
         """Operator to query the table represented by this object.
@@ -88,7 +93,7 @@ class DynamoDB:
         :param value: value of the desired item's primary key
         :return: the item whose primary key is the requisite value
         """
-        data = self.table.get_item(Key={self._primary_key: value})
+        data = self._table.get_item(Key={self._primary_key: value})
         return data["Item"]
 
     def __setitem__(self, value, item: dict):
@@ -121,13 +126,38 @@ class DynamoDB:
             **item
         }
 
-        r = self.table.put_item(Item=new_entry)
+        r = self._table.put_item(Item=new_entry)
+
+        # This operation may have changed the number of entries in the table,
+        # so we set the _len attribute to None. _len won't be reevaluated until
+        # the next time __len__ gets called.
+        self._len = None
 
         return r
 
+    @property
+    def table(self):
+        """Property for accessing the Table object.
+
+        ----
+
+        Any time you want to access the Table object, you might be doing something
+        that changes the number of items in the DynamoDB table, so the _len attribute
+        will be reset to None so it will have to be reevaluated the next time __len__
+        gets called.
+
+        """
+        self._len = None
+        return self._table
+
     def __len__(self):
-        table_data = self.get_all_items()
-        return len(table_data)
+        # The number of entries in the table is lazily evaluated. Any of this class's
+        # methods that might change the number of entries in the table will result in
+        # the _len attribute being set to None.
+        if self._len is None:
+            table_data = self.get_all_items()
+            self._len = len(table_data)
+        return self._len
 
     # This method will get _ALL_ the data in a table, even over the 1MB limit. If you don't really
     # need 1MB of data, use `DynamoDB.table.scan()` instead of `DynamoDB.get_all_items()`.
@@ -146,7 +176,7 @@ class DynamoDB:
         :param kwargs: any arguments you want to pass to the scan() operation
         :return: all items in the table
         """
-        response = self.table.scan(**kwargs)
+        response = self._table.scan(**kwargs)
         if kwargs.get("Select") == "COUNT":
             return response.get("Count")
         data = response.get("Items")
@@ -171,7 +201,7 @@ class DynamoDB:
         :param value: desired value for the specified key in the returned items
         :return: items for which item[key] == value
         """
-        data = self.table.query(
+        data = self._table.query(
             KeyConditionExpression=Key(key).eq(value)
         )
         return data["Items"]
