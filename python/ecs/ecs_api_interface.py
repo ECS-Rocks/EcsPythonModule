@@ -24,9 +24,9 @@ class EcsApiInterface:
 
     """
 
-    def __init__(self, method_path: str):
+    def __init__(self, base_url: str = "https://api.ecs.rocks", method_path: str):
         self._http = urllib3.PoolManager()
-        self._endpoint_url = "https://api.ecs.rocks" + method_path
+        self._endpoint_url = base_url + method_path
 
     def __call__(self, request_data: dict, verb: str = "POST", headers: dict = None):
         """The function call operator is overloaded to call the API method passed to the ctor.
