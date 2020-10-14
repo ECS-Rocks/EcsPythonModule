@@ -24,7 +24,7 @@ class EcsApiInterface:
 
     """
 
-    def __init__(self, base_url: str = "https://api.ecs.rocks", method_path: str):
+    def __init__(self, method_path: str, base_url: str = "https://api.ecs.rocks"):
         self._http = urllib3.PoolManager()
         self._endpoint_url = base_url + method_path
 
