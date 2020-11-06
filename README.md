@@ -15,5 +15,10 @@ directory as `lambda_handler.py` to use the ECS module. Sample `config.json`:
 }
 ```
 
+With `config.json` in the same directory as `lambda_handler.py` and `ecs-module.zip` installed
+in your Layers, you can bring the ECS module into scope by simply adding `import ecs` to your code.
+Documentation for the module can be found in the code itself in the form of detailed docstrings
+written in `python/ecs/ecs_*.py`.
+
 No part of this document should be interpreted to suggest or imply any kind of warranty or
 guarantee of service. See the LICENSE for more details.
