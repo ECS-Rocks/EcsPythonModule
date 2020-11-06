@@ -7,7 +7,7 @@ people or companies find it useful as well, that's entirely incidental.
 This module is meant to be used as an AWS Lambda Layer. You must have `config.json` in the same
 directory as `lambda_handler.py` to use the ECS module. Sample `config.json`:
 
-```
+```json
 {
     "region-name": "us-east-1",
     "endpoint-url": "https://dynamodb.us-east-1.amazonaws.com",
