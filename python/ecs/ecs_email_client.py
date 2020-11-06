@@ -29,7 +29,7 @@ class EmailClient:
         except FileNotFoundError:
             raise FileNotFoundError((
                 "Unable to find config.json. "
-                "You need config.json in your pwd to use the ecs.DynamoDB class."
+                "You need config.json in your pwd to use the ecs.EmailClient class."
             ))
 
         self._client = boto3.client("ses", region_name=self._config_options["region-name"])
@@ -39,7 +39,7 @@ class EmailClient:
         return ("".join([
             message,
             "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-",
-            "\r\nBeep beep! I'm a robot. Email my creator at Dante@elkhornservice.com if you have questions.",
+            f"\r\nBeep beep! I'm a robot. Email my creator at {self._config_options['admin-email']} if you have questions.",
             "\r\n"
         ]))
 
@@ -49,10 +49,10 @@ class EmailClient:
             <html>
             <head></head>
             <body>
-        """ + message.replace("\n", "<br>") + """
+        """ + message.replace("\n", "<br>") + f"""
             <hr>
             <small>
-            Beep beep! I'm a robot. Email my creator at Dante@elkhornservice.com if you have questions.
+            Beep beep! I'm a robot. Email my creator at {self._config_options['admin-email']} if you have questions.
             </small>
             </body>
             </html>
