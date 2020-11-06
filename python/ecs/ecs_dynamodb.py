@@ -37,7 +37,7 @@ class DynamoDB:
 
     ----
 
-    Additionally, the Table object is asccesible through a @property, so you can still
+    Additionally, the Table object is accesible through a @property, so you can still
     use all of Amazon's API methods. For example, if you have an instance of ecs.DynamoDB
     named "foo", and you want to call delete_item on its table, you can do it like so:
 
