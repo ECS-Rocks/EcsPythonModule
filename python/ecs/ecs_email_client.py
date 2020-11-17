@@ -34,8 +34,7 @@ class EmailClient:
 
         self._client = boto3.client("ses", region_name=self._config_options["region-name"])
 
-    @staticmethod
-    def _plain_to_text_email(message: str) -> str:
+    def _plain_to_text_email(self, message: str) -> str:
         return ("".join([
             message,
             "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-",
@@ -43,8 +42,7 @@ class EmailClient:
             "\r\n"
         ]))
 
-    @staticmethod
-    def _plain_to_html_email(message: str) -> str:
+    def _plain_to_html_email(self, message: str) -> str:
         return """
             <html>
             <head></head>
